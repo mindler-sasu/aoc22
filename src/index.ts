@@ -15,9 +15,11 @@ const readFromFile = promisify(fs.readFile);
 export const getFileContents = (path: string) =>
   TaskEitherTryCatch(() => readFromFile(path, "utf-8"), toError);
 
-export const sum = (arr: number[]) => arr.reduce((a, b) => a + b);
 export const splitLines = (str: string) =>
   tryCatch(() => str.split("\n"), toError);
+
+const sum = (arr: number[]) =>
+  tryCatch(() => arr.reduce((a, b) => a + b), toError);
 
 const chunkSums = (arr: string[]) =>
   tryCatch(() => {
@@ -33,11 +35,13 @@ const chunkSums = (arr: string[]) =>
     }, []);
   }, toError);
 
-const max = (arr: number[]) => tryCatch(() => Math.max(...arr), toError);
+const maxThree = (arr: number[]) =>
+  tryCatch(() => arr.sort((a, b) => a - b).slice(-3), toError);
 
 flow(
   getFileContents,
   chain((str) => fromIOEither(splitLines(str))),
   chain((arr) => fromIOEither(chunkSums(arr))),
-  chain((arr) => fromIOEither(max(arr)))
+  chain((arr) => fromIOEither(maxThree(arr))),
+  chain((arr) => fromIOEither(sum(arr)))
 )("src/input.txt")().then((either) => fold(console.error, console.log)(either));
