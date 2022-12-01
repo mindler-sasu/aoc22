@@ -1,17 +1,15 @@
-import { promisify } from "util";
-import fs from "fs";
+import { readFileSync } from "fs";
 import {
   tryCatch,
   match,
-  map
-} from "fp-ts/lib/TaskEither";
-import { toError } from "fp-ts/lib/Either";
+  map,
+  toError
+} from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 
-const readFromFile = promisify(fs.readFile);
 
 export const getFileContents = (path: string) =>
-  tryCatch(() => readFromFile(path, "utf-8"), toError);
+  tryCatch(() => readFileSync(path, "utf-8"), toError);
 
 export const splitLines = (str: string) => str.split("\n")
 
@@ -39,4 +37,4 @@ pipe(
   map(maxThree),
   map(sum),
   match(console.error, console.log)
-)()
+)
