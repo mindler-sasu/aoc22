@@ -4,7 +4,10 @@ import { getFileContents, sum } from "./util";
 
 const getPositionForMyChoice = (choice: string) => choice.charCodeAt(0) - 88;
 const getPositionForOppChoice = (choice: string) => choice.charCodeAt(0) - 65;
+const getCommandForMyChoice = (choice: string) => choice.charCodeAt(0) - 89;
+
 const acualMod = (x: number, m: number) => ((x % m) + m) % m;
+
 const getResultForRound = (expected: string, answer: string) => {
   if (expected === answer) return 0;
   return acualMod(
@@ -12,6 +15,16 @@ const getResultForRound = (expected: string, answer: string) => {
     3
   );
 };
+
+const getAcualAnswerForAnswer = (expected: string, answer: string) =>
+  expected !== answer
+    ? String.fromCharCode(
+        acualMod(
+          getPositionForOppChoice(expected) + getCommandForMyChoice(answer),
+          3
+        ) + 88
+      )
+    : expected;
 
 const pointsForResult = (result: number) => {
   if (result === 0) return 3;
@@ -27,8 +40,10 @@ const calculatePoints = (rounds: string[]) =>
     }
 
     return (
-      pointsForResult(getResultForRound(expected, answer)) +
-      getPositionForMyChoice(answer) +
+      pointsForResult(
+        getResultForRound(expected, getAcualAnswerForAnswer(expected, answer))
+      ) +
+      getPositionForMyChoice(getAcualAnswerForAnswer(expected, answer)) +
       1
     );
   });
