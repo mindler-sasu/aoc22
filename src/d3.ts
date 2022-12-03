@@ -13,16 +13,15 @@ const mapPriority = (arr: string[]): number[] =>
     str.charCodeAt(0) < 91 ? str.charCodeAt(0) - 38 : str.charCodeAt(0) - 96
   );
 const reduceUniquesOfN = (arrs: string[][]) =>
-  arrs.map((arrN: string[]) => {
-    const join = [...arrN.join()].filter((char) =>
+  arrs.map((arrN: string[]) =>
+    [...arrN.join()].filter((char) =>
       arrN.every((arr) => [...arr].includes(char))
-    );
-    return join;
-  });
+    )
+  );
 
-const flatMapUnique = (arrs: string[][]) => {
-  return arrs.flatMap((arr: string[]) => [...new Set(arr)]);
-};
+const flatMapUnique = (arrs: string[][]) =>
+  arrs.flatMap((arr: string[]) => [...new Set(arr)]);
+
 pipe(
   "src/inpufz/i3.txt",
   getFileContents,
