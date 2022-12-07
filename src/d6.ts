@@ -1,3 +1,8 @@
 import { readFileSync } from "fs";
-
-const input = readFileSync("src/inpufz/i5.txt", "utf-8");
+console.log(
+  readFileSync("src/inpufz/i6.txt", "utf-8")
+    .split("")
+    .findIndex(
+      (_: string, i, input) => new Set(input.slice(i, i + 14)).size === 14
+    ) + 14
+);
