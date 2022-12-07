@@ -1,7 +1,8 @@
 import { map, match } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import { getFileContents, splitLines, sum } from "./util";
-
+// 7826
+// 2577
 const splitInMiddle = (arr: string[]) =>
   arr.map((str) => [
     str.slice(0, str.length / 2),

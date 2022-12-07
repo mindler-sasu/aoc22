@@ -13,3 +13,8 @@ export const peek = <T>(z: T): T => {
   console.log(z);
   return z;
 };
+
+export const chunk = (arr: string[], size: number): string[][] =>
+  arr.length > size
+    ? [arr.slice(0, size), ...chunk(arr.slice(size), size)]
+    : [arr];
