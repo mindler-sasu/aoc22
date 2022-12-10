@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node src/d6.ts"
+    "start": "ts-node src/d8.ts"
   },
   "keywords": [],
   "author": "",
