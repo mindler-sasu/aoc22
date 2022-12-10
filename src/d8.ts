@@ -16,15 +16,26 @@ const matrix = readFileSync("src/inpufz/i8.txt", "utf-8")
 // The center 3 is not visible from any direction; for it to be visible, there would need to be only trees of at most height 2 between it and an edge.
 // The right-middle 3 is visible from the right.
 // In the bottom row, the middle 5 is visible, but the 3 and 4 are not.
-
+function findLastIndex<T>(
+  array: Array<T>,
+  predicate: (value: T, index: number, obj: T[]) => boolean
+): number {
+  let l = array.length;
+  while (l--) {
+    //@ts-ignore
+    if (predicate(array[l], l, array)) return l;
+  }
+  return -1;
+}
 const generateVisibilityMap = (
   matrix:
     | (string[] | boolean[])[]
     | string[][]
     | boolean[][]
     | (string | boolean)[][]
+    | (string | boolean | number)[][]
 ) => {
-  return matrix.map((row, iz) => {
+  return matrix.map((row) => {
     let highestTree = 0;
     return row.map((tree, i) => {
       const isHigher = Number(tree) > highestTree;
@@ -32,33 +43,35 @@ const generateVisibilityMap = (
       if (isHigher) {
         highestTree = Number(tree);
       }
+      const viewBlockedAt = findLastIndex(row.slice(0, i), (p) => p >= tree);
 
-      if (
-        iz === 0 ||
-        iz === matrix.length - 1 ||
-        i === 0 ||
-        i === row.length - 1
-      ) {
-        return true;
-      }
+      const distToBlock =
+        viewBlockedAt !== -1
+          ? row.slice(viewBlockedAt, i).length
+          : row.slice(0, i).length;
 
-      if (isHigher) {
-        return true;
-      }
-      return false;
+      // console.log({
+      //   tree,
+      //   i,
+      //   viewBlockedAt,
+      //   distToBlock,
+      //   a: row.slice(0, i).length,
+      //   b: viewBlockedAt === -1,
+      // });
+      return distToBlock;
     });
   });
 };
 
-const transpose = (matrixz: (string[] | boolean[])[]) =>
+const transpose = (matrixz: (string[] | boolean[] | number[])[]) =>
   matrixz.reduce(
-    (prev: (string | boolean)[][], next) =>
+    (prev: (string | boolean | number)[][], next) =>
       next.map((_, i) => (prev[i] || []).concat(next[i] ?? [])),
     []
   );
 
 const reverseRows = (
-  matrixz: (string[] | boolean[])[] | (string | boolean)[][]
+  matrixz: (string[] | boolean[] | number[])[] | (string | boolean | number)[][]
 ) => {
   const m = matrixz.map((a) => a.slice());
   return m.map((row) => row.reverse());
@@ -74,14 +87,14 @@ const visibilityFromBottom = transpose(
   reverseRows(generateVisibilityMap(reverseRows(transpose(matrix))))
 );
 
-console.log("-------L");
-console.log(visibilityFromLeft);
-console.log("-------R");
-console.log(visibilityFromRight);
-console.log("-------T");
-console.log(visibilityFromTop);
-console.log("-------B");
-console.log(visibilityFromBottom);
+// console.log("-------L");
+// console.log(visibilityFromLeft);
+// console.log("-------R");
+// console.log(visibilityFromRight);
+// console.log("-------T");
+// console.log(visibilityFromTop);
+// console.log("-------B");
+// console.log(visibilityFromBottom);
 
 const acualVisibilityMap = [
   visibilityFromBottom,
@@ -90,9 +103,9 @@ const acualVisibilityMap = [
   visibilityFromTop,
 ].reduce((result, currMap) => {
   //@ts-ignore
-  return currMap.map((row, j) => row.map((tree, i) => result[j][i] || tree));
+  return currMap.map((row, j) => row.map((tree, i) => result[j][i] * tree));
 });
 console.log("-------M");
-console.log(acualVisibilityMap);
-console.log(acualVisibilityMap.length, acualVisibilityMap[0]?.length);
-console.log(acualVisibilityMap.flat().filter(Boolean).length);
+// console.log(acualVisibilityMap);
+//@ts-ignore
+console.log(Math.max(...acualVisibilityMap.flat()));
